@@ -1,0 +1,10 @@
+[Unit]
+Description=Certdeploy Client Daemon
+After=network.target
+
+[Service]
+Type=exec
+ExecStart="/usr/local/bin/certdeploy-client" --daemon --config "/etc/certdeploy/client.yml"
+
+[Install]
+WantedBy=multi-user.target

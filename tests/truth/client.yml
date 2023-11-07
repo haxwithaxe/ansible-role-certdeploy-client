@@ -1,0 +1,10 @@
+destination: /etc/certdeploy/certs
+sftpd:
+    listen_port: 33774
+    privkey_filename: /etc/certdeploy/client_key
+    server_pubkey: AAAAC3NzaC1lZDI1NTE5AAAAIHV0QNMf38ATYmMmv+giNcjdo2By5bHpqdBWhHYaF48m
+source: /var/cache/certdeploy
+update_services:
+-   action: reload
+    name: nginx.service
+    type: systemd

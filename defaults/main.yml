@@ -11,3 +11,4 @@ certdeploy_client_service_file_group: root
 certdeploy_client_service_file_owner: root
 certdeploy_client_uid: root
 certdeploy_client_config_dir: /etc/certdeploy
+certdeploy_client_listen_port: 33774

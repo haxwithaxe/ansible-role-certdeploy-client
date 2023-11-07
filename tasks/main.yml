@@ -15,7 +15,9 @@
       sftpd:
         server_pubkey: "{{ certdeploy_client_config_sftpd_server_pubkey
           | default(certdeploy_client_server_pubkey) }}"
-        privkey_filename: "{{ certdeploy_config_path }}/client_key"
+        privkey_filename: "{{ certdeploy_client_config_dir }}/client_key"
+        listen_port: "{{ certdeploy_client_config_sftpd_listen_port 
+          | default(certdeploy_client_listen_port)}}"
   ansible.builtin.set_fact:
     _config: "{{ __default_config | combine(certdeploy_client_config, recursive=true) }}"
 
@@ -32,28 +34,31 @@
     - "{{ _config.source }}"
     - "{{ _config.destination }}"
 
-# Don't mess with permissions on stuff we don't own
 - name: Ensure install directories exists
-  ansible.builtin.file:  # noqa: risky-file-permissions
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
+    mode: 'u=rwX,g=rX,o=rX'
+    owner: root
+    group: root
   loop:
     - "{{ certdeploy_client_install_lib_systemd_system }}"
-  check_mode: yes
 
 - name: Install certdeploy-client privkey
   ansible.builtin.copy:
     content: "{{ certdeploy_client_privkey }}"
     dest: "{{ _config.sftpd.privkey_filename }}"
     mode: "{{ certdeploy_client_mode }}"
-    owner: "{{ certdeploy_uid }}"
-    group: "{{ certdeploy_gid }}"
+    owner: "{{ certdeploy_client_uid }}"
+    group: "{{ certdeploy_client_gid }}"
   no_log: yes
   notify: RestartCertdeployClient
 
 - name: Install certdeploy-client config
   ansible.builtin.copy:
-    content: "{{ _config | to_nice_yaml }}"
+    content: '{{ _config
+      | to_nice_yaml
+      | regex_replace("[''""]([0-9]+(.[0-9]+)?)[''""]", "\1") }}' # strip quotes from numbers
     dest: "{{ certdeploy_client_config_dir }}/client.yml"
     mode: "{{ certdeploy_client_mode }}"
     owner: "{{ certdeploy_client_uid }}"
@@ -62,7 +67,7 @@
 
 - name: Install certdeploy-client systemd service file
   ansible.builtin.template:
-    src: files/certdeploy-client.service
+    src: templates/certdeploy-client.service.j2
     dest: "{{ certdeploy_client_install_lib_systemd_system }}/certdeploy-client.service"
     mode: '0644'
     owner: "{{ certdeploy_client_service_file_owner }}"

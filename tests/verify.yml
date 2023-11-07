@@ -25,7 +25,7 @@
       register: _installed_config
 
     - name: Get checksum of reference config
-      ansible.builtin.local_action:
+      local_action:
         module: ansible.builtin.stat
         path: "{{ playbook_dir }}/truth/client.yml"
       register: _ref_config
@@ -34,6 +34,38 @@
       ansible.builtin.assert:
         that:
           - _ref_config.stat.checksum == _installed_config.stat.checksum
+
+    - name: Get checksum of installed privkey
+      ansible.builtin.stat:
+        path: /etc/certdeploy/client_key
+      register: _installed_key
+
+    - name: Get checksum of reference privkey
+      local_action:
+        module: ansible.builtin.stat
+        path: "{{ playbook_dir }}/truth/client_key"
+      register: _ref_key
+
+    - name: Assert the installed and reference configs are the same
+      ansible.builtin.assert:
+        that:
+          - _ref_key.stat.checksum == _installed_key.stat.checksum
+
+    - name: Get checksum of installed systemd service file
+      ansible.builtin.stat:
+        path: /usr/local/lib/systemd/system/certdeploy-client.service
+      register: _installed_service
+
+    - name: Get checksum of reference systemd service file
+      local_action:
+        module: ansible.builtin.stat
+        path: "{{ playbook_dir }}/truth/certdeploy-client.service"
+      register: _ref_service
+
+    - name: Assert the installed and reference configs are the same
+      ansible.builtin.assert:
+        that:
+          - _ref_service.stat.checksum == _installed_service.stat.checksum
 
     - name: Check for systemd service
       ansible.builtin.systemd_service:
