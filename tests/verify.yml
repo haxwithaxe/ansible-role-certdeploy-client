@@ -1,0 +1,51 @@
+---
+
+- name: Verify
+  hosts: test_host
+  become: yes
+  tasks:
+    - name: Check output files exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: _output_exists
+      loop:
+        - /etc/certdeploy/client_key
+        - /etc/certdeploy/client.yml
+        - /usr/local/lib/systemd/system/certdeploy-client.service
+    
+    - name: Assert all output files exist
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+      loop: "{{ _output_exists.results }}"
+
+    - name: Get checksum of installed config
+      ansible.builtin.stat:
+        path: /etc/certdeploy/client.yml
+      register: _installed_config
+
+    - name: Get checksum of reference config
+      ansible.builtin.local_action:
+        module: ansible.builtin.stat
+        path: "{{ playbook_dir }}/truth/client.yml"
+      register: _ref_config
+
+    - name: Assert the installed and reference configs are the same
+      ansible.builtin.assert:
+        that:
+          - _ref_config.stat.checksum == _installed_config.stat.checksum
+
+    - name: Check for systemd service
+      ansible.builtin.systemd_service:
+        name: certdeploy-client.service
+        enabled: yes
+        state: started
+      check_mode: yes
+      register: _systemd_service
+
+    - debug: var=_systemd_service
+
+    - name: Assert systemd service is started
+      ansible.builtin.assert:
+        that:
+          - not _systemd_service.changed

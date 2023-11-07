@@ -1,0 +1,25 @@
+galaxy_info:
+  author: haxwithaxe
+  namespace: haxwithaxe
+  description: Install the CertDeploy client
+
+  license: GPL-3.0-only
+
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: Debian
+      versions:
+      - 12
+
+  galaxy_tags:
+    - certdeploy
+    - tls
+    - ssl
+    - certificate
+    - certificate_management
+    - system
+    - systemd
+    - deploy
+
+dependencies: []

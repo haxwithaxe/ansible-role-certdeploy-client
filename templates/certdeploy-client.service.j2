@@ -1,0 +1,16 @@
+[Unit]
+Description=Certdeploy Client Daemon
+After=network.target
+
+[Service]
+Type=exec
+ExecStart="{{ certdeploy_client_pipx_bin_dir }}/certdeploy-client" --daemon --config "{{ certdeploy_client_config_dir }}/client.yml"
+{% if certdeploy_client_uid not in [ 0, 'root' ] %}
+User={{ certdeploy_client_uid }}
+{% endif %}
+{% if certdeploy_client_gid not in [ 0, 'root' ] %}
+Group={{ certdeploy_client_gid }}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

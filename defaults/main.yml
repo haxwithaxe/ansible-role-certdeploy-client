@@ -1,0 +1,13 @@
+---
+
+certdeploy_client_config_source: /var/cache/certdeploy
+certdeploy_client_directory_mode: 'u=rwX,g=,o='
+certdeploy_client_gid: root
+certdeploy_client_install_lib_systemd_system: /usr/local/lib/systemd/system
+certdeploy_client_install_pipx_bin_dir: /usr/local/bin
+certdeploy_client_install_pipx_home: /opt/pipx
+certdeploy_client_mode: '0600'
+certdeploy_client_service_file_group: root
+certdeploy_client_service_file_owner: root
+certdeploy_client_uid: root
+certdeploy_client_config_dir: /etc/certdeploy

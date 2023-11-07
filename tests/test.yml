@@ -1,0 +1,25 @@
+---
+
+- name: Test
+  hosts: test_host
+  become: yes
+  roles:
+    - role: haxwithaxe.certdeploy_client
+      vars:
+        certdeploy_client_config:
+          update_services:
+            - type: systemd
+              name: nginx.service
+              action: reload
+        certdeploy_client_server_pubkey: "AAAAC3NzaC1lZDI1NTE5AAAAIHV0QNMf38ATYmMmv+giNcjdo2By5bHpqdBWhHYaF48m"
+        # THIS IS A BURNER PRIVATE KEY
+        certdeploy_client_privkey: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+            QyNTUxOQAAACB1dEDTH9/AE2JjJr/oIjXI3aNgcuWx6anQVoR2GhePJgAAAJAVU0f5FVNH
+            +QAAAAtzc2gtZWQyNTUxOQAAACB1dEDTH9/AE2JjJr/oIjXI3aNgcuWx6anQVoR2GhePJg
+            AAAEBpBPkD3e0hExKNvM65Vl0rn5iv0/TZkAeyZaBgC2sGsnV0QNMf38ATYmMmv+giNcjd
+            o2By5bHpqdBWhHYaF48mAAAAC2hheEBjcmlja2V0AQI=
+            -----END OPENSSH PRIVATE KEY-----
+
+        # THIS IS A BURNER PRIVATE KEY
